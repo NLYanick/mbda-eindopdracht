@@ -57,4 +57,22 @@ class CatRepository(private val context: Context) {
         }
         return items
     }
+
+    suspend fun fetchCatImageUrl(breedId: String?): String? {
+        if (breedId.isNullOrEmpty()) return null
+        return suspendCancellableCoroutine { continuation ->
+            val request = JsonArrayRequest(
+                Request.Method.GET,
+                "$BASE_URL/images/search?breed_ids=$breedId&limit=1",
+                null,
+                { response ->
+                    val url = response.optJSONObject(0)?.optString("url")
+                    continuation.resume(url)
+                },
+                { error -> continuation.resumeWithException(error) }
+            )
+            queue.add(request)
+            continuation.invokeOnCancellation { request.cancel() }
+        }
+    }
 }

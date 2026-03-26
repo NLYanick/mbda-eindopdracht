@@ -11,19 +11,16 @@ import com.example.mdba_eindopdracht.ui.navigation.screens.CatListScreen
 interface CatDestination {
     val icon: ImageVector
     val route: String
-    val screen: @Composable () -> Unit
 }
 
 object CatDetails : CatDestination {
     override val icon = Icons.Filled.Info
     override val route = "list"
-    override val screen: @Composable () -> Unit = { CatDetailsScreen() }
 }
 
 object CatList : CatDestination {
     override val icon = Icons.AutoMirrored.Filled.List
     override val route = "cat"
-    override val screen: @Composable () -> Unit = { CatListScreen() }
 }
 
 val catScreens = listOf(CatList, CatDetails)

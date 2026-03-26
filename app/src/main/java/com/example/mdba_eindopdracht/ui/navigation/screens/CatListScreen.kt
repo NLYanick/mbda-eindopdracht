@@ -1,6 +1,7 @@
 package com.example.mdba_eindopdracht.ui.navigation.screens
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -21,11 +22,18 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.example.mdba_eindopdracht.data.CatData
 import com.example.mdba_eindopdracht.data.CatRepository
+import com.example.mdba_eindopdracht.ui.ViewModels.CatViewModel
+import com.example.mdba_eindopdracht.ui.navigation.CatDetails
 
 @Composable
-fun CatListScreen(modifier: Modifier = Modifier,) {
+fun CatListScreen(
+    modifier: Modifier = Modifier,
+    viewModel: CatViewModel,
+    navController: NavController
+) {
     val repository = CatRepository(LocalContext.current)
     var cats by remember { mutableStateOf<List<CatData>>(emptyList()) }
     var isLoading by remember { mutableStateOf(true) }
@@ -46,20 +54,23 @@ fun CatListScreen(modifier: Modifier = Modifier,) {
     } else {
         LazyColumn(modifier = modifier) {
             items(items = cats) { cat ->
-                CatRow(cat)
+                CatRow(cat, {
+                    viewModel.selectCat(cat,repository);
+                    navController.navigate(CatDetails.route)
+                })
             }
         }
     }
 }
 
 @Composable
-fun CatRow(cat: CatData) {
+fun CatRow(cat: CatData, onClick: () -> Unit = {}) {
 
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .border(1.dp, color = Color.Gray)
-            .padding(16.dp),
+            .padding(16.dp).clickable(onClick = {onClick()}),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(text = cat.name)

@@ -14,16 +14,16 @@ interface CatDestination {
     val screen: @Composable () -> Unit
 }
 
-object Details : CatDestination {
+object CatDetails : CatDestination {
     override val icon = Icons.Filled.Info
-    override val route = "overview"
+    override val route = "list"
     override val screen: @Composable () -> Unit = { CatDetailsScreen() }
 }
 
-object List : CatDestination {
+object CatList : CatDestination {
     override val icon = Icons.AutoMirrored.Filled.List
-    override val route = "accounts"
+    override val route = "cat"
     override val screen: @Composable () -> Unit = { CatListScreen() }
 }
 
-val catScreens = listOf(List, Details)
+val catScreens = listOf(CatList, CatDetails)

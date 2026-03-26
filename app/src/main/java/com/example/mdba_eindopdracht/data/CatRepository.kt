@@ -1,38 +1,45 @@
 package com.example.mdba_eindopdracht.data
 
+import android.content.Context
 import com.android.volley.Request
 import com.android.volley.RequestQueue
 import com.android.volley.toolbox.JsonArrayRequest
 import com.android.volley.toolbox.Volley
+import kotlinx.coroutines.suspendCancellableCoroutine
 import org.json.JSONArray
+import kotlin.coroutines.resume
+import kotlin.coroutines.resumeWithException
 
-class CatRepository {
-    final val BASE_URL: String = "https://api.thecatapi.com/v1"
-    val queue: RequestQueue = Volley.newRequestQueue(this)
+class CatRepository(private val context: Context) {
+    private val BASE_URL: String = "https://api.thecatapi.com/v1"
+    private val queue: RequestQueue = Volley.newRequestQueue(context)
 
-    fun fetchAllCatBreeds(): List<CatData> {
-        val url = "$BASE_URL/breeds"
+    // suspend makes an asynchronous function
+    suspend fun fetchAllCatBreeds(): List<CatData> =
+        suspendCancellableCoroutine { continuation -> // `suspendCancellableCoroutine` makes it possible to return values
+            val url = "$BASE_URL/breeds"
 
-        val request = JsonArrayRequest(
-            Request.Method.GET,
-            url,
-            null,
-            { response ->
-                try {
-                    return parseCats(response)
-                } catch (parseError: Exception) {
-                    print(parseError)
-                    return null
+            val request = JsonArrayRequest(
+                Request.Method.GET,
+                url,
+                null,
+                { response ->
+                    try {
+                        continuation.resume(parseCats(response))
+                    } catch (parseError: Exception) {
+                        continuation.resumeWithException(parseError)
+                    }
+                },
+                { error ->
+                    continuation.resumeWithException(error)
                 }
-            },
-            { error ->
-                print(error)
-                return null
-            }
-        )
+            )
 
-        queue.add(request)
-    }
+            queue.add(request)
+            continuation.invokeOnCancellation {
+                request.cancel()
+            }
+        }
 
     private fun parseCats(response: JSONArray): List<CatData> {
         val items = mutableListOf<CatData>()

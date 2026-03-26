@@ -34,10 +34,7 @@ fun CatApp(modifier: Modifier = Modifier) {
     MDBA_EindopdrachtTheme {
         val navController = rememberNavController()
 
-        Scaffold(modifier = Modifier.fillMaxSize()
-            , topBar = {
-            Button(onClick = {navController.navigate(CatDetails.route) { launchSingleTop = true }}) { Text(text = "Details") }
-        }) { innerPadding ->
+        Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
             NavHost(
                 navController = navController,
                 startDestination = CatList.route,

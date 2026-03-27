@@ -42,6 +42,7 @@ fun CatListScreen(
         isLoading = true
         try {
             cats = repository.fetchAllCatBreeds()
+            viewModel.restoreFavoritesToList(cats)
         } catch (e: Exception) {
             print("Error in loading cats: $e")
         } finally {
@@ -70,7 +71,8 @@ fun CatRow(cat: CatData, onClick: () -> Unit = {}) {
         modifier = Modifier
             .fillMaxWidth()
             .border(1.dp, color = Color.Gray)
-            .padding(16.dp).clickable(onClick = {onClick()}),
+            .padding(16.dp)
+            .clickable(onClick = {onClick()}),
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(text = cat.name)

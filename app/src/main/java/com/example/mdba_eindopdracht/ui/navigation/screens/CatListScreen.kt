@@ -3,6 +3,7 @@ package com.example.mdba_eindopdracht.ui.navigation.screens
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -29,6 +30,9 @@ import com.example.mdba_eindopdracht.data.CatData
 import com.example.mdba_eindopdracht.data.CatRepository
 import com.example.mdba_eindopdracht.ui.ViewModels.CatViewModel
 import com.example.mdba_eindopdracht.ui.navigation.CatDetails
+import com.example.mdba_eindopdracht.ui.theme.StarColor
+import com.example.mdba_eindopdracht.ui.theme.isDarkMode
+import com.example.mdba_eindopdracht.ui.theme.toggleDarkMode
 
 @Composable
 fun CatListScreen(
@@ -61,17 +65,29 @@ fun CatListScreen(
         Text(text = "Loading cats...")
     } else {
         Column {
-            Button(onClick = {
-                filterFavourites = !filterFavourites
-                
-                filteredCats = if(filterFavourites) {
-                    cats.filter { it.isFavourite }
-                } else {
-                    cats
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Button(onClick = {
+                    filterFavourites = !filterFavourites
+
+                    filteredCats = if(filterFavourites) {
+                        cats.filter { it.isFavourite }
+                    } else {
+                        cats
+                    }
+                }) {
+                    Text(text = if (filterFavourites) "Remove filter" else "Filter favorites")
                 }
-            }) {
-                Text(text = if (filterFavourites) "Remove filter" else "Filter favorites")
+
+                Button(onClick = {
+                    toggleDarkMode()
+                }) {
+                    Text(if (isDarkMode()) "Light" else "Dark")
+                }
             }
+
             LazyColumn(modifier = modifier) {
                 items(items = filteredCats) { cat ->
                     CatRow(cat, {
@@ -97,7 +113,9 @@ fun CatRow(cat: CatData, onClick: () -> Unit = {}) {
     ) {
         Text(text = cat.name)
         if(cat.isFavourite) {
-            Icon(imageVector = Icons.Filled.Star, tint = Color.Yellow, contentDescription = "Favorite")
+            Box {
+                Icon(imageVector = Icons.Filled.Star, tint = StarColor, contentDescription = "Favorite")
+            }
         }
     }
 }

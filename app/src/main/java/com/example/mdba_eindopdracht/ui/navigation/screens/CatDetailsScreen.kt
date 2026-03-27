@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.example.mdba_eindopdracht.data.CatData
 import com.example.mdba_eindopdracht.ui.ViewModels.CatViewModel
+import com.example.mdba_eindopdracht.ui.theme.StarColor
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.net.URL
@@ -124,7 +125,7 @@ fun DetailsTopRow(
             Icon(
                 imageVector = if (cat.isFavourite) Icons.Filled.Star else Icons.Outlined.Star,
                 contentDescription = if (cat.isFavourite) "Unfavorite" else "Favorite",
-                tint = if (cat.isFavourite) Color.Yellow else Color.Gray
+                tint = if (cat.isFavourite) StarColor else Color.LightGray
             )
         }
     }

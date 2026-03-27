@@ -20,10 +20,14 @@ import com.example.mdba_eindopdracht.ui.navigation.CatList
 import com.example.mdba_eindopdracht.ui.navigation.screens.CatDetailsScreen
 import com.example.mdba_eindopdracht.ui.navigation.screens.CatListScreen
 import com.example.mdba_eindopdracht.ui.theme.MDBA_EindopdrachtTheme
+import com.example.mdba_eindopdracht.ui.theme.initializeThemePreferences
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        initializeThemePreferences(this)
+
         enableEdgeToEdge()
         setContent {
             CatApp(modifier = Modifier)
@@ -34,6 +38,7 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun CatApp(modifier: Modifier = Modifier) {
     val viewModel: CatViewModel = viewModel()
+
     MDBA_EindopdrachtTheme {
         val navController = rememberNavController()
 
@@ -63,7 +68,9 @@ fun CatApp(modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun CatAppPreview() {
-    MDBA_EindopdrachtTheme {
+    var darkTheme: Boolean = true
+
+    MDBA_EindopdrachtTheme(darkTheme) {
         CatApp()
     }
 }

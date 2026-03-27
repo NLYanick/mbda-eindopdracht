@@ -1,18 +1,17 @@
 package com.example.mdba_eindopdracht.ui.navigation.screens
 
+import android.content.Intent
 import android.graphics.BitmapFactory
+import android.net.Uri
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.outlined.Star
 import androidx.compose.material3.Button
@@ -52,6 +51,14 @@ fun CatDetailsScreen(
 
             Text(text = "Name: ${cat.name}")
             Text(text = "Origin: ${cat.origin}")
+            cat.wikipedia_url?.let { url ->
+                Button(onClick = {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(url))
+                    navController.context.startActivity(intent)
+                }) {
+                    Text("Learn more")
+                }
+            }
 
             if (catImageUrl != null) {
                 // Load image directly from URL

@@ -2,7 +2,21 @@ package com.example.mdba_eindopdracht.ui.navigation.screens
 
 import android.graphics.BitmapFactory
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.outlined.Star
+import androidx.compose.material3.Button
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -12,9 +26,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.example.mdba_eindopdracht.data.CatData
 import com.example.mdba_eindopdracht.ui.ViewModels.CatViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -23,30 +40,39 @@ import java.net.URL
 @Composable
 fun CatDetailsScreen(
     viewModel: CatViewModel,
+    navController: NavController
 ) {
 
     val selectedCat by viewModel.selectedCat.collectAsState()
     val catImageUrl by viewModel.catImage.collectAsState()
 
     selectedCat?.let { cat ->
-        Text(text = "Name: ${cat.name}")
-    }
+        Column {
+            DetailsTopRow(viewModel, navController, cat)
 
-    if (catImageUrl != null) {
-        // Load image directly from URL
-        var bitmap by remember { mutableStateOf<ImageBitmap?>(null) }
+            Text(text = "Name: ${cat.name}")
+            Text(text = "Origin: ${cat.origin}")
 
-        LaunchedEffect(catImageUrl) {
-            bitmap = loadBitmapFromUrl(catImageUrl!!)
+            if (catImageUrl != null) {
+                // Load image directly from URL
+                var bitmap by remember { mutableStateOf<ImageBitmap?>(null) }
+
+                LaunchedEffect(catImageUrl) {
+                    catImageUrl?.let { url ->
+                        bitmap = loadBitmapFromUrl(url)
+                    }
+                }
+
+                bitmap?.let {
+                    Image(
+                        bitmap = it,
+                        contentDescription = "Cat image",
+                        modifier = Modifier.size(200.dp)
+                    )
+                }
+            }
         }
 
-        bitmap?.let {
-            Image(
-                bitmap = it,
-                contentDescription = "Cat image",
-                modifier = Modifier.size(200.dp)
-            )
-        }
     }
 }
 
@@ -63,5 +89,37 @@ suspend fun loadBitmapFromUrl(url: String): ImageBitmap? {
     }
 }
 
+@Composable
+fun DetailsTopRow(
+    viewModel: CatViewModel,
+    navController: NavController,
+    cat: CatData
+)  {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween
+    ) {
+        Button(onClick = {
+            navController.navigate(navController.previousBackStackEntry?.destination?.route ?: "list") {
+                popUpTo("list") { inclusive = true }
+            }
+        }) {
+            Icon(
+                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                contentDescription = "Go Back",
+                tint = Color.Gray
+            )
+        }
 
+        Button(onClick = {
+            viewModel.toggleFavourite()
+        }) {
+            Icon(
+                imageVector = if (cat.isFavourite) Icons.Filled.Star else Icons.Outlined.Star,
+                contentDescription = if (cat.isFavourite) "Unfavorite" else "Favorite",
+                tint = if (cat.isFavourite) Color.Yellow else Color.Gray
+            )
+        }
+    }
+}
 

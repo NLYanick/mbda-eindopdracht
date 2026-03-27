@@ -52,6 +52,7 @@ fun CatApp(modifier: Modifier = Modifier) {
                 composable(route = CatDetails.route) {
                     CatDetailsScreen(
                         viewModel = viewModel,
+                        navController = navController
                     )
                 }
             }

@@ -27,4 +27,14 @@ class CatViewModel : ViewModel() {
             }
         }
     }
+
+    fun updateCat(block: (CatData) -> CatData) {
+        _selectedCat.value = _selectedCat.value?.let(block)
+    }
+
+    fun toggleFavourite() {
+        _selectedCat.value = _selectedCat.value?.copy(
+            isFavourite = !(_selectedCat.value?.isFavourite ?: false)
+        )
+    }
 }
